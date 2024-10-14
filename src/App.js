@@ -2,8 +2,16 @@ import './App.css';
 import Todo from "./components/Todo";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { nanoid } from "nanoid";
+
+function usePrevious(value) {
+  const ref = useRef(null);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 const FILTER_MAP = {
   All: () => true,
@@ -67,6 +75,16 @@ function App(props) {
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
   
+
+  const listHeadingRef = useRef(null);
+  const prevTaskLength = usePrevious(tasks.length);
+
+  useEffect(() => {
+    if (tasks.length < prevTaskLength) {
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
+
   /**
    *  
    * 代办任务列表多选框
@@ -120,7 +138,9 @@ function App(props) {
       {filterList}
 
       </div>
-      <h2 id="list-heading">{headingText}</h2>
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
+        {headingText}
+      </h2>
       <ul
         role="list"
         className="todo-list stack-large stack-exception"

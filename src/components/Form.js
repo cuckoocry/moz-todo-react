@@ -12,11 +12,17 @@ function Form(props) {
         setName(event.target.value);
     }
 
-
+    /**
+     * 添加任务
+     * @param {*} event 
+     */
     function handleSubmit(event) {
-    event.preventDefault();
-    props.addTask(name);
-    setName("");
+        if(name === ''){
+           alert('请输入任务名称！')
+        }
+        event.preventDefault();
+        props.addTask(name);
+        setName("");
     }
 
   return (
